@@ -1,46 +1,39 @@
-name: Docker CI/CD Pipeline
+name: Docker CI
 
 on:
   push:
     branches: [ "main" ]
 
 jobs:
-  test:
-    name: Run Unit Tests
-    runs-on: ubuntu-latest
+  build-and-push:
+    # 1. CORRECCIÓN: Cambiado de 'runs-size' a 'runs-on'
+    runs-on: ubuntu-latest 
+
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
+      # (Opcional) Si quieres mantener la ejecución de pruebas unitarias antes de compilar en Docker:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.21'
 
-      - name: Run Tests with Coverage
-        run: |
-          go mod init password-checker || true
-          go mod tidy
-          go test -v -coverprofile=coverage.out
-          go tool cover -func=coverage.out
+      - name: Run Unit Tests
+        run: go test -v ./...
 
-  build-and-push:
-    name: Build and Push Docker Image
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      # Configuración de entornos Docker
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
+      # 2. CORRECCIÓN: Autenticación usando 'vars' para el usuario
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }} # El Token/Password sí debe ser un Secret oculto
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
+      # 3. CORRECCIÓN: Tag de la imagen corregido sin la '/' inicial suelta
       - name: Build and Push Docker image
         uses: docker/build-push-action@v5
         with:
