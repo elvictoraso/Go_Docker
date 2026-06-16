@@ -1,12 +1,12 @@
-# Etapa 1: Construcción
-FROM golang:1.21-alpine AS builder
+# Etapa 1: Construcción con la versión más reciente de Go
+FROM golang:alpine AS builder
 WORKDIR /app
 
-# Copiamos directamente el código fuente y el módulo
+# Copiamos todo el código fuente
 COPY . .
 
 # Compilamos la aplicación de forma estática
-RUN CGO_ENABLED=0 GOOS=linux go build -o password-checker .
+RUN CGO_ENABLED=0 GOOS=linux go build -o password-checker
 
 # Etapa 2: Imagen final optimizada
 FROM alpine:latest
