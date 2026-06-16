@@ -35,7 +35,7 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: elvictoraso
+          username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Set up Docker Buildx
@@ -47,5 +47,5 @@ jobs:
           context: .
           push: true
           tags: |
-            elvictoraso/password-checker:latest
-            elvictoraso/password-checker:${{ github.sha }}
+            ${{ vars.DOCKERHUB_USERNAME }}/password-checker:latest
+            ${{ vars.DOCKERHUB_USERNAME }}/password-checker:${{ github.sha }}
