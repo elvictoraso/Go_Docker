@@ -30,7 +30,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' # Solo sube a Docker Hub si es un push a main
-    
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
@@ -38,7 +38,7 @@ jobs:
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
       with:
-        username: ${{ vars.DOCKERHUB_USERNAME }}
+        username: elvictoraso
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Build and Push Docker image
@@ -47,5 +47,5 @@ jobs:
         context: .
         push: true
         tags: |
-          ${{ secrets.DOCKERHUB_USERNAME }}/password-checker:latest
-          ${{ secrets.DOCKERHUB_USERNAME }}/password-checker:${{ github.sha }}
+          elvictoraso/password-checker:latest
+          elvictoraso/password-checker:${{ github.sha }}
