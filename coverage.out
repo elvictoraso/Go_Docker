@@ -1,0 +1,21 @@
+mode: set
+password-checker/main.go:16.62,17.23 1 1
+password-checker/main.go:17.23,19.3 1 1
+password-checker/main.go:21.2,28.14 6 1
+password-checker/main.go:28.14,28.25 1 1
+password-checker/main.go:29.2,29.14 1 1
+password-checker/main.go:29.14,29.25 1 1
+password-checker/main.go:30.2,30.14 1 1
+password-checker/main.go:30.14,30.25 1 1
+password-checker/main.go:31.2,31.16 1 1
+password-checker/main.go:31.16,31.27 1 1
+password-checker/main.go:33.2,33.39 1 1
+password-checker/main.go:33.39,35.3 1 1
+password-checker/main.go:35.8,35.45 1 1
+password-checker/main.go:35.45,37.3 1 1
+password-checker/main.go:38.2,38.80 1 1
+password-checker/main.go:41.54,43.23 1 0
+password-checker/main.go:43.23,81.3 3 0
+password-checker/main.go:84.2,84.45 1 0
+password-checker/main.go:84.45,90.3 4 0
+password-checker/main.go:93.13,98.2 4 0
