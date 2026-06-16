@@ -9,7 +9,6 @@ on:
 jobs:
   test:
     name: Run Unit Tests
-    runs-size: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Code
