@@ -19,7 +19,7 @@ jobs:
 
       - name: Run Tests with Coverage
         run: |
-          if [ ! -f go.mod ]; then go mod init password-checker; fi
+          go mod init password-checker || true
           go mod tidy
           go test -v -coverprofile=coverage.out
           go tool cover -func=coverage.out

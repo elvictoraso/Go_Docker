@@ -6,8 +6,8 @@ WORKDIR /app
 # Copiamos todo el código fuente
 COPY . .
 
-# Inicializamos el módulo de Go si hace falta para evitar errores de compilación
-RUN if [ ! -f go.mod ]; then go mod init password-checker; fi && \
+# Inicializamos el módulo de Go de forma segura y compilamos
+RUN go mod init password-checker || true && \
     go mod tidy && \
     CGO_ENABLED=0 GOOS=linux go build -o password-checker .
 
