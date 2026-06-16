@@ -1,30 +1,27 @@
-# Etapa 1: Construcción
-FROM golang:1.21-alpine AS builder
+# Cambia la versión vieja (1.21) por la de tu go.mod (1.26)
+FROM golang:1.26-alpine AS builder
 
 WORKDIR /app
 
-# Copiamos primero los archivos del módulo para aprovechar la caché de Docker
+# Copiar archivos de dependencias
 COPY go.mod ./
-# Si el comando go mod tidy te generó un archivo go.sum, descomenta la siguiente línea:
+# Si ya tienes go.sum, descomenta la siguiente línea:
 # COPY go.sum ./
 
 RUN go mod download
 
-# Copiamos el resto del código fuente
+# Copiar el resto del código fuente
 COPY . .
 
-# Compilamos la aplicación de forma estática
+# Compilar de forma estática
 RUN CGO_ENABLED=0 GOOS=linux go build -o password-checker .
 
-# Etapa 2: Imagen final ligera
+# Etapa final optimizada
 FROM alpine:latest
-RUN apk --no-cache add ca-certificates
-
-WORKDIR /root/
-
-# Copiamos el binario compilado de la etapa anterior
+WORKDIR /app
 COPY --from=builder /app/password-checker .
+COPY --from=builder /app/templates ./templates
+# (Asegúrate de copiar carpetas de assets/estáticos si los usas)
 
 EXPOSE 8080
-
 CMD ["./password-checker"]
