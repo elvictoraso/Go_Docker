@@ -2,43 +2,54 @@ name: Docker CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build-and-push:
-    # 1. CORRECCIÓN: Cambiado de 'runs-size' a 'runs-on'
-    runs-on: ubuntu-latest 
-
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # (Opcional) Si quieres mantener la ejecución de pruebas unitarias antes de compilar en Docker:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.21'
-
+  
       - name: Run Unit Tests
         run: go test -v ./...
 
-      # Configuración de entornos Docker
+      # 1. PASO FALTASTE AGREGADO: Configurar emulación multiplataforma con QEMU
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      # 2. Inicializar el motor avanzado de Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # 2. CORRECCIÓN: Autenticación usando 'vars' para el usuario
+      # 3. Autenticación en Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }} # El Token/Password sí debe ser un Secret oculto
-
-      # 3. CORRECCIÓN: Tag de la imagen corregido sin la '/' inicial suelta
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      # 4. Comprobación de compilación estándar (docker/build) sin forzar el push directo
       - name: Build and Push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: true
-          tags: |
-            ${{ vars.DOCKERHUB_USERNAME }}/password-checker:latest
-            ${{ vars.DOCKERHUB_USERNAME }}/password-checker:${{ github.sha }}
+          file: ./Dockerfile
+          push: false
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/go-docker:build-test
+
+      # 5. PASO FALTANTE AGREGADO: Comprobación con el orquestador (docker/bake)
+      - name: Validar Compilacion con Bake
+        uses: docker/bake-action@v4
+        with:
+          files: ./docker-bake.hcl
+          targets: default
+          set: |
+            *.output=type=cacheonly
