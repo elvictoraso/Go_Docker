@@ -21,7 +21,7 @@ jobs:
       - name: Run Unit Tests
         run: go test -v ./...
 
-      # 1. PASO FALTASTE AGREGADO: Configurar emulación multiplataforma con QEMU
+      # 1. Configurar emulación multiplataforma con QEMU
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -36,7 +36,7 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      # 4. Comprobación de compilación estándar (docker/build) sin forzar el push directo
+      # 4. Comprobación de compilación estándar (docker/build)
       - name: Build and Push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -45,9 +45,9 @@ jobs:
           push: false
           tags: ${{ vars.DOCKERHUB_USERNAME }}/go-docker:build-test
 
-      # 5. PASO FALTANTE AGREGADO: Comprobación con el orquestador (docker/bake)
+      # 5. CORRECCIÓN: Se actualiza a la v5 para compatibilidad con Buildx >= 0.20.0
       - name: Validar Compilacion con Bake
-        uses: docker/bake-action@v4
+        uses: docker/bake-action@v5
         with:
           files: ./docker-bake.hcl
           targets: default
